@@ -1,6 +1,6 @@
 # Simulateur Nachos
 
-Dépot de la matière Approche Objet du S7
+Dépot de la matière Système d'Exploitation du S7
 
 ## Documentation
 
