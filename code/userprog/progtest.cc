@@ -11,6 +11,7 @@
 #include "copyright.h"
 #include "system.h"
 #include "console.h"
+#include "synchconsole.h"
 #include "addrspace.h"
 #include "synch.h"
 
@@ -20,27 +21,26 @@
 //      memory, and jump to it.
 //----------------------------------------------------------------------
 
-void
-StartProcess (char *filename)
+void StartProcess(char *filename)
 {
-    OpenFile *executable = fileSystem->Open (filename);
+    OpenFile *executable = fileSystem->Open(filename);
     AddrSpace *space;
 
     if (executable == NULL)
-      {
-	  printf ("Unable to open file %s\n", filename);
-	  return;
-      }
-    space = new AddrSpace (executable);
+    {
+        printf("Unable to open file %s\n", filename);
+        return;
+    }
+    space = new AddrSpace(executable);
     currentThread->space = space;
 
-    delete executable;		// close file
+    delete executable; // close file
 
-    space->InitRegisters ();	// set the initial register values
-    space->RestoreState ();	// load page table register
+    space->InitRegisters(); // set the initial register values
+    space->RestoreState();  // load page table register
 
-    machine->Run ();		// jump to the user progam
-    ASSERT (FALSE);		// machine->Run never returns;
+    machine->Run(); // jump to the user progam
+    ASSERT(FALSE);  // machine->Run never returns;
     // the address space exits
     // by doing the syscall "exit"
 }
@@ -58,16 +58,16 @@ static Semaphore *writeDone;
 //----------------------------------------------------------------------
 
 static void
-ReadAvailHandler (void *arg)
+ReadAvailHandler(void *arg)
 {
-    (void) arg;
-    readAvail->V ();
+    (void)arg;
+    readAvail->V();
 }
 static void
-WriteDoneHandler (void *arg)
+WriteDoneHandler(void *arg)
 {
-    (void) arg;
-    writeDone->V ();
+    (void)arg;
+    writeDone->V();
 }
 
 //----------------------------------------------------------------------
@@ -76,35 +76,54 @@ WriteDoneHandler (void *arg)
 //      the output.  Stop when the user types a 'q'.
 //----------------------------------------------------------------------
 
-void
-ConsoleTest (const char *in, const char *out)
+void ConsoleTest(const char *in, const char *out)
 {
     char ch;
 
-    readAvail = new Semaphore ("read avail", 0);
-    writeDone = new Semaphore ("write done", 0);
-    console = new Console (in, out, ReadAvailHandler, WriteDoneHandler, 0);
+    readAvail = new Semaphore("read avail", 0);
+    writeDone = new Semaphore("write done", 0);
+    console = new Console(in, out, ReadAvailHandler, WriteDoneHandler, 0);
 
     for (;;)
-      {
-	  readAvail->P ();	// wait for character to arrive
-	  ch = console->GetChar ();
-      if(ch != '\n'){
-          console->PutChar ('<');	// echo it!
-    	  writeDone->P ();	// wait for write to finish
-    	  console->PutChar (ch);	// echo it!
-    	  writeDone->P ();	// wait for write to finish
-          console->PutChar ('>');	// echo it!
-    	  writeDone->P ();	// wait for write to finish
-          console->PutChar ('\n');	// echo it!
-    	  writeDone->P ();	// wait for write to finish
-    	  if (ch == 'q' or ch == EOF) {
-    	      printf ("Au revoir!\n");
-    	      break;		// if q, quit
-    	  }
-      }
-      }
+    {
+        readAvail->P(); // wait for character to arrive
+        ch = console->GetChar();
+        if (ch != '\n')
+        {
+            console->PutChar('<');  // echo it!
+            writeDone->P();         // wait for write to finish
+            console->PutChar(ch);   // echo it!
+            writeDone->P();         // wait for write to finish
+            console->PutChar('>');  // echo it!
+            writeDone->P();         // wait for write to finish
+            console->PutChar('\n'); // echo it!
+            writeDone->P();         // wait for write to finish
+            if (ch == 'q' or ch == EOF)
+            {
+                printf("Au revoir!\n");
+                break; // if q, quit
+            }
+        }
+    }
     delete console;
     delete readAvail;
     delete writeDone;
 }
+
+#ifdef CHANGED
+
+void SynchConsoleTest(const char *in, const char *out)
+{
+    char ch;
+    SynchConsole *test_synchconsole = new SynchConsole(in, out);
+    while ((ch = test_synchconsole->SynchGetChar()) != EOF)
+        if(ch != '\n'){
+            test_synchconsole->SynchPutChar('<');
+            test_synchconsole->SynchPutChar(ch);
+            test_synchconsole->SynchPutChar('>');     
+            test_synchconsole->SynchPutChar('\n'); 
+        }       
+    fprintf(stderr, "EOF detected in SynchConsole!\n");
+}
+
+#endif //CHANGED
