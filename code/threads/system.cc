@@ -33,6 +33,9 @@ SynchDisk *synchDisk;
 
 #ifdef USER_PROGRAM		// requires either FILESYS or FILESYS_STUB
 Machine *machine;		// user program memory and registers
+#ifdef CHANGED
+SynchConsole *synchconsole;
+#endif
 #endif
 
 #ifdef NETWORK
@@ -214,6 +217,8 @@ Cleanup ()
 #ifdef USER_PROGRAM
     delete machine;
     machine = NULL;
+    delete synchconsole;
+    synchconsole = NULL;
 #endif
 
 #ifdef FILESYS_NEEDED

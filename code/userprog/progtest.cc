@@ -127,7 +127,7 @@ void SynchConsoleTest(const char *in, const char *out)
                 printf("Au revoir!\n");
                 break; // if q, quit
             } 
-        }       
+        }   
     delete test_synchconsole;
     delete readAvail;
     delete writeDone;
