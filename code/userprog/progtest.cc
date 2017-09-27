@@ -121,9 +121,16 @@ void SynchConsoleTest(const char *in, const char *out)
             test_synchconsole->SynchPutChar('<');
             test_synchconsole->SynchPutChar(ch);
             test_synchconsole->SynchPutChar('>');     
-            test_synchconsole->SynchPutChar('\n'); 
+            test_synchconsole->SynchPutChar('\n');
+            if (ch == 'q' or ch == EOF)
+            {
+                printf("Au revoir!\n");
+                break; // if q, quit
+            } 
         }       
-    fprintf(stderr, "EOF detected in SynchConsole!\n");
+    delete test_synchconsole;
+    delete readAvail;
+    delete writeDone;
 }
 
 #endif //CHANGED

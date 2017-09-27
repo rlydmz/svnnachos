@@ -80,7 +80,17 @@ ExceptionHandler (ExceptionType which)
 		    DEBUG ('s', "Shutdown, initiated by user program.\n");
 		    interrupt->Halt ();
 		    break;
-		  }
+			}
+
+		#ifdef CHANGED
+		case SC_PutChar:
+			{
+				DEBUG ('s', "Putchar\n");
+				
+				break;
+			}
+		#endif // CHANGED 
+
 		default:
 		  {
 		    printf("Unimplemented system call %d\n", type);

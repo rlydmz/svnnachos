@@ -130,10 +130,10 @@ int main(int argc, char **argv)
 		}
 		else if (!strcmp (*argv, "-sc")){
 			if (argc == 1)
-			ConsoleTest(NULL, NULL);
+			SynchConsoleTest(NULL, NULL);
 			else{
 				ASSERT(argc > 2);
-				ConsoleTest(*(argv + 1), *(argv + 2));
+				SynchConsoleTest(*(argv + 1), *(argv + 2));
 				argCount = 3;
 			}
 		}
