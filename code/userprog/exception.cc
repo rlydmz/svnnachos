@@ -83,6 +83,14 @@ ExceptionHandler (ExceptionType which)
 			}
 
 		#ifdef CHANGED
+		case SC_Exit:
+		{
+			DEBUG ('s', "Shutdown, initiated by user.\n");
+			printf("code retour main : %d\n",machine->ReadRegister(4));			
+			interrupt->Halt ();
+			break;
+		}
+
 		case SC_PutChar:
 			{
 				DEBUG ('s', "Putchar\n");
