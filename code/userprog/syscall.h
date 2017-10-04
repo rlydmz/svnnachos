@@ -33,6 +33,7 @@
 #define SC_Yield	10
 #define SC_PutChar  11
 #define SC_PutString 12
+#define SC_GetChar  13
 
 #ifdef IN_USER_MODE
 
@@ -110,6 +111,9 @@ void PutChar(char c);
 
 /* PutString */
 void PutString(const char *s);
+
+/* GetChar */
+int GetChar();
 
 /* Read "size" bytes from the open file into "buffer".  
  * Return the number of bytes actually read -- if the open file isn't

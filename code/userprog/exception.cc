@@ -108,6 +108,13 @@ ExceptionHandler (ExceptionType which)
 				free(chaine);
 				break;
 			}
+		case SC_GetChar:
+		{
+				DEBUG ('s', "GetChar\n");
+				char c = synchconsole->SynchGetChar();
+				machine->WriteRegister(2, c);
+				break;
+			}
 		#endif // CHANGED 
 
 		default:
