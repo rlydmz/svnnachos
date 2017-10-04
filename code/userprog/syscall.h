@@ -32,6 +32,7 @@
 #define SC_Fork		9
 #define SC_Yield	10
 #define SC_PutChar  11
+#define SC_PutString 12
 
 #ifdef IN_USER_MODE
 
@@ -106,6 +107,9 @@ void Write (const void *buffer, int size, OpenFileId id);
 
 /* Putchar */
 void PutChar(char c);
+
+/* PutString */
+void PutString(const char *s);
 
 /* Read "size" bytes from the open file into "buffer".  
  * Return the number of bytes actually read -- if the open file isn't

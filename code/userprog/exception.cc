@@ -90,6 +90,16 @@ ExceptionHandler (ExceptionType which)
 				synchconsole->SynchPutChar(c);			
 				break;
 			}
+		case SC_PutString:
+			{
+				DEBUG ('s', "PutString\n");
+				int addr = machine->ReadRegister(4);
+				char *chaine = (char *)malloc(MAX_STRING_SIZE);
+				synchconsole->copyStringFromMachine(addr, chaine, MAX_STRING_SIZE);
+				synchconsole->SynchPutString(chaine);
+				free(chaine);
+				break;
+			}
 		#endif // CHANGED 
 
 		default:
