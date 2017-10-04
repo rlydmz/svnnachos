@@ -3,7 +3,7 @@
 void print(){
 
     #if 1
-    PutString("Bonjour !");
+    PutString("Bonjour, je suis trop long!");
     #endif
     
 }
