@@ -104,7 +104,7 @@ ExceptionHandler (ExceptionType which)
 				int addr = machine->ReadRegister(4);
 				char *chaine = (char *)malloc(MAX_STRING_SIZE);
 				synchconsole->copyStringFromMachine(addr, chaine, MAX_STRING_SIZE);
-				synchconsole->SynchPutString(chaine);
+				synchconsole->SynchPutString(chaine);			
 				free(chaine);
 				break;
 			}
@@ -114,7 +114,22 @@ ExceptionHandler (ExceptionType which)
 				char c = synchconsole->SynchGetChar();
 				machine->WriteRegister(2, c);
 				break;
-			}
+		}
+		case SC_GetString:
+		{
+				DEBUG ('s', "GetString\n");
+				int addr = machine->ReadRegister(4);
+				int size = machine->ReadRegister(5);
+				
+				if(size > MAX_STRING_SIZE)
+					size = MAX_STRING_SIZE;
+
+				char *chaine = (char *)malloc(size);
+				synchconsole->SynchGetString(chaine, size);
+				synchconsole->copyStringToMachine(addr, chaine, size);
+				free(chaine);
+				break;
+		}
 		#endif // CHANGED 
 
 		default:

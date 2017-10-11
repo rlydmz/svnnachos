@@ -2,6 +2,6 @@
 
 
 int main(){
-    GetChar();
+    char c = GetChar();
     //Halt();
 }

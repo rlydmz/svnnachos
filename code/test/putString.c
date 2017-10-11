@@ -11,5 +11,4 @@ void print(){
 
 int main(){
     print();
-    Halt();
 }

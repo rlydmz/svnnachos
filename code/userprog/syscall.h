@@ -34,6 +34,7 @@
 #define SC_PutChar  11
 #define SC_PutString 12
 #define SC_GetChar  13
+#define SC_GetString  14
 
 #ifdef IN_USER_MODE
 
@@ -114,6 +115,9 @@ void PutString(const char *s);
 
 /* GetChar */
 int GetChar();
+
+/* GetString */
+void GetString(char *s, int n);
 
 /* Read "size" bytes from the open file into "buffer".  
  * Return the number of bytes actually read -- if the open file isn't
