@@ -88,7 +88,7 @@ int SynchConsole::copyStringFromMachine(int from, char *to, unsigned size){
       return i+1;
     } 
   }
-  to[size-1] = '\0';
+  //to[size-1] = '\0';
   return size;
 }
 

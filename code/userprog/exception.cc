@@ -103,9 +103,20 @@ ExceptionHandler (ExceptionType which)
 				DEBUG ('s', "PutString\n");
 				int addr = machine->ReadRegister(4);
 				char *chaine = (char *)malloc(MAX_STRING_SIZE);
-				synchconsole->copyStringFromMachine(addr, chaine, MAX_STRING_SIZE);
-				synchconsole->SynchPutString(chaine);			
+				int inc = 0, size = 0;
+				while(true){
+					size = synchconsole->copyStringFromMachine(addr+(inc*MAX_STRING_SIZE), chaine, MAX_STRING_SIZE);
+					if(size == MAX_STRING_SIZE){
+						synchconsole->SynchPutString(chaine);		
+						inc++;
+					}				
+					else{
+						synchconsole->SynchPutString(chaine);		
+						break;
+					}	
+				}		
 				free(chaine);
+				synchconsole->SynchPutString("\n");	
 				break;
 			}
 		case SC_GetChar:
