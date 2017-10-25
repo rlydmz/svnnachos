@@ -170,6 +170,14 @@ AddrSpace::InitRegisters ()
 	   numPages * PageSize - 16);
 }
 
+#ifdef CHANGED
+int 
+AddrSpace::AllocateUserStack ()
+{
+    return numPages * PageSize - 16 - 256;
+}
+#endif
+
 //----------------------------------------------------------------------
 // AddrSpace::SaveState
 //      On a context switch, save any machine state, specific

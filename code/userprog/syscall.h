@@ -35,6 +35,8 @@
 #define SC_PutString 12
 #define SC_GetChar  13
 #define SC_GetString  14
+#define SC_ThreadCreate 15
+#define SC_ThreadExit 16
 
 #ifdef IN_USER_MODE
 
@@ -145,6 +147,12 @@ void Fork (void (*func) ());
  * or not. 
  */
 void Yield ();
+
+/* ThreadCreate */
+int ThreadCreate(void f(void *arg), void *arg);
+
+/* ThreadExit */
+void ThreadExit(void);
 
 #endif // IN_USER_MODE
 
