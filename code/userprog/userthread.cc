@@ -17,6 +17,7 @@ int do_ThreadCreate(int f, int arg){
     struct schmurtz *argStart = (struct schmurtz*)malloc(sizeof(struct schmurtz));
     argStart->f = f;
     argStart->arg = arg;   
+    currentThread->space->IncNbThreads();
     t->Start(StartUserThread, argStart);
 
     return 0;
@@ -46,8 +47,13 @@ void StartUserThread(void *arg){
 }
 
 int do_ThreadExit(){
-    currentThread->Finish();
+    
     currentThread->space->RestoreState();
+    currentThread->space->DecNbThreads();
+    if(currentThread->space->GetNbThreads() == 0){
+        interrupt->Halt();
+    }
+    currentThread->Finish();
 
     return 0;
 }

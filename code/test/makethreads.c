@@ -7,7 +7,5 @@ void wow(int c){
 
 int main(){
     ThreadCreate(wow, 'c');
-    while(1){
-
-    }
+    ThreadExit();
 }

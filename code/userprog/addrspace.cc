@@ -21,6 +21,7 @@
 #include "noff.h"
 #include "syscall.h"
 #include "new"
+#include "synch.h"
 
 //----------------------------------------------------------------------
 // SwapHeader
@@ -62,6 +63,8 @@ SwapHeader (NoffHeader * noffH)
 
 AddrSpace::AddrSpace (OpenFile * executable)
 {
+    nbThreads = 1;
+    lock = new Semaphore("lock done", 1);
     NoffHeader noffH;
     unsigned int i, size;
 
@@ -204,4 +207,20 @@ AddrSpace::RestoreState ()
 {
     machine->pageTable = pageTable;
     machine->pageTableSize = numPages;
+}
+
+int AddrSpace::GetNbThreads(){
+    return nbThreads;
+}
+
+void AddrSpace::IncNbThreads(){
+    lock->P();
+    nbThreads++;
+    lock->V();
+}
+
+void AddrSpace::DecNbThreads(){
+    lock->P();
+    nbThreads--;
+    lock->V();
 }

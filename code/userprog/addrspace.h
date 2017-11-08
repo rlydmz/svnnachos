@@ -19,6 +19,8 @@
 
 #define UserStacksAreaSize		1024	// increase this as necessary!
 
+class Semaphore;
+
 class AddrSpace:dontcopythis
 {
   public:
@@ -34,7 +36,13 @@ class AddrSpace:dontcopythis
     void SaveState ();		// Save/restore address space-specific
     void RestoreState ();	// info on a context switch 
 
+    int GetNbThreads();
+    void IncNbThreads();
+    void DecNbThreads();    
+
   private:
+      int nbThreads;
+      Semaphore *lock;
       TranslationEntry * pageTable;	// Assume linear page table translation
     // for now!
     unsigned int numPages;	// Number of pages in the virtual 

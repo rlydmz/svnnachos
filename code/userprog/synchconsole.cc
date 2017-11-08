@@ -7,6 +7,7 @@
 
 static Semaphore *readAvail;
 static Semaphore *writeDone;
+static Semaphore *lock;
 
 static void ReadAvailHandler(void *arg) { (void) arg; readAvail->V(); }
 
@@ -16,6 +17,7 @@ SynchConsole::SynchConsole(const char *in, const char *out)
 {
 readAvail = new Semaphore("read avail", 0);
 writeDone = new Semaphore("write done", 0);
+lock = new Semaphore("lock done", 1);
 console = new Console (in, out, ReadAvailHandler, WriteDoneHandler, 0);
 }
 
@@ -28,14 +30,19 @@ delete readAvail;
 
 void SynchConsole::SynchPutChar(int ch)
 {
+  lock->P();
   console->PutChar (ch);
   writeDone->P ();
+  lock->V();
 }
 
 int SynchConsole::SynchGetChar()
 {
+  lock->P();
   readAvail->P ();
-  return console->GetChar ();
+  char c = console->GetChar();
+  lock->V();
+  return c;
 } 
 
 void SynchConsole::SynchPutString(const char s[])
