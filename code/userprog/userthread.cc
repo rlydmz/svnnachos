@@ -13,14 +13,22 @@ struct schmurtz
 
 int do_ThreadCreate(int f, int arg){
 
-    Thread *t = new Thread("newThread");
-    struct schmurtz *argStart = (struct schmurtz*)malloc(sizeof(struct schmurtz));
-    argStart->f = f;
-    argStart->arg = arg;   
-    currentThread->space->IncNbThreads();
-    t->Start(StartUserThread, argStart);
-
-    return 0;
+    int index = currentThread->space->threadStack->Find();
+    if(index != -1){
+        printf("Thread créé à l'index %d\n", index);
+        currentThread->SetIndex(index);
+        Thread *t = new Thread("newThread");
+        struct schmurtz *argStart = (struct schmurtz*)malloc(sizeof(struct schmurtz));
+        argStart->f = f;
+        argStart->arg = arg;   
+        currentThread->space->IncNbThreads();
+        t->Start(StartUserThread, argStart);
+        return 0;
+    }
+    else{
+        printf("Impossible de créer le thread\n");
+        return -1;
+    }
 }
 
 void StartUserThread(void *arg){
@@ -53,8 +61,8 @@ int do_ThreadExit(){
     if(currentThread->space->GetNbThreads() == 0){
         interrupt->Halt();
     }
+    currentThread->space->threadStack->Clear(currentThread->GetIndex());
     currentThread->Finish();
 
     return 0;
 }
-

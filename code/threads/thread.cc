@@ -415,4 +415,16 @@ Thread::RestoreUserState ()
 }
 #endif
 
+#ifdef CHANGED
 
+void
+Thread::SetIndex(int i){
+    index = i;
+}
+
+int 
+Thread::GetIndex(){
+    return index;
+}
+
+#endif

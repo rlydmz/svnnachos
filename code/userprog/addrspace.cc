@@ -65,6 +65,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
 {
     nbThreads = 1;
     lock = new Semaphore("lock done", 1);
+    threadStack = new BitMap(UserStacksAreaSize/ThreadSize);
     NoffHeader noffH;
     unsigned int i, size;
 
@@ -175,9 +176,9 @@ AddrSpace::InitRegisters ()
 
 #ifdef CHANGED
 int 
-AddrSpace::AllocateUserStack ()
+AddrSpace::AllocateUserStack (int index)
 {
-    return numPages * PageSize - 16 - 256;
+    return numPages * PageSize - 16 - (index+1) * ThreadSize;
 }
 #endif
 

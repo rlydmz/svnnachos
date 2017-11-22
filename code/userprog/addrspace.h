@@ -16,8 +16,10 @@
 #include "copyright.h"
 #include "filesys.h"
 #include "translate.h"
+#include "bitmap.h"
 
 #define UserStacksAreaSize		1024	// increase this as necessary!
+#define ThreadSize  256
 
 class Semaphore;
 
@@ -31,14 +33,16 @@ class AddrSpace:dontcopythis
 
     void InitRegisters ();	// Initialize user-level CPU registers,
     // before jumping to user code
-    int AllocateUserStack();
+    int AllocateUserStack(int index);
 
     void SaveState ();		// Save/restore address space-specific
     void RestoreState ();	// info on a context switch 
 
     int GetNbThreads();
     void IncNbThreads();
-    void DecNbThreads();    
+    void DecNbThreads(); 
+
+    BitMap *threadStack;   
 
   private:
       int nbThreads;

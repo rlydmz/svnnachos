@@ -113,9 +113,16 @@ class Thread:dontcopythis
 	printf ("%s, ", name);
     }
 
+    #ifdef CHANGED
+    void SetIndex(int i);
+    int GetIndex();
+    #endif
+
   private:
     // some of the private data for this class is listed above
-
+    #ifdef CHANGED
+    int index;
+    #endif
     unsigned long *stack;	// Bottom of the stack 
     // NULL if this is the main thread
     // (If NULL, don't deallocate stack)
