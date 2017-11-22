@@ -95,7 +95,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
     pageTable = new TranslationEntry[numPages];
     for (i = 0; i < numPages; i++)
       {
-	  pageTable[i].physicalPage = i;	// for now, phys page # = virtual page #
+	  pageTable[i].physicalPage = i+1;	// for now, phys page # = virtual page #
 	  pageTable[i].valid = TRUE;
 	  pageTable[i].use = FALSE;
 	  pageTable[i].dirty = FALSE;
@@ -109,17 +109,23 @@ AddrSpace::AddrSpace (OpenFile * executable)
       {
 	  DEBUG ('a', "Initializing code segment, at 0x%x, size 0x%x\n",
 		 noffH.code.virtualAddr, noffH.code.size);
-	  executable->ReadAt (&(machine->mainMemory[noffH.code.virtualAddr]),
-			      noffH.code.size, noffH.code.inFileAddr);
+	  /*executable->ReadAt (&(machine->mainMemory[noffH.code.virtualAddr]),
+                  noffH.code.size, noffH.code.inFileAddr); */
+        ReadAtVirtual(executable, noffH.code.virtualAddr, noffH.code.size, noffH.code.inFileAddr, pageTable, numPages);
+
       }
     if (noffH.initData.size > 0)
       {
 	  DEBUG ('a', "Initializing data segment, at 0x%x, size 0x%x\n",
 		 noffH.initData.virtualAddr, noffH.initData.size);
-	  executable->ReadAt (&
-			      (machine->mainMemory
-			       [noffH.initData.virtualAddr]),
-			      noffH.initData.size, noffH.initData.inFileAddr);
+        //On se permet ici d'écrire directement dans la mémoire physique MIPS car précédemment, on a initialisé
+        //les adresses virtuelles aux même valeurs que les adresses physiques.
+	    /*executable->ReadAt (&
+			      (machine->mainMemory[noffH.initData.virtualAddr]),
+			      noffH.initData.size,
+                  noffH.initData.inFileAddr); */
+
+        ReadAtVirtual(executable, noffH.initData.virtualAddr, noffH.initData.size, noffH.initData.inFileAddr, pageTable, numPages);
       }
 
     DEBUG ('a', "Area for stacks at 0x%x, size 0x%x\n",
@@ -176,9 +182,9 @@ AddrSpace::InitRegisters ()
 
 #ifdef CHANGED
 int 
-AddrSpace::AllocateUserStack (int index)
+AddrSpace::AllocateUserStack ()
 {
-    return numPages * PageSize - 16 - (index+1) * ThreadSize;
+    return numPages * PageSize - 16 - ThreadSize;
 }
 #endif
 
@@ -224,4 +230,32 @@ void AddrSpace::DecNbThreads(){
     lock->P();
     nbThreads--;
     lock->V();
+}
+
+void AddrSpace::ReadAtVirtual(OpenFile *executable, 
+                            int virtualaddr, 
+                            int numBytes, 
+                            int position, 
+                            TranslationEntry *pageTable, 
+                            unsigned numPages){
+
+    TranslationEntry *oldPageTable = machine->pageTable;
+    unsigned oldPageTableSize = machine->pageTableSize;
+
+    char *buffer =(char *)malloc(numBytes*sizeof(char));
+
+    executable->ReadAt(buffer, numBytes, position);
+    
+    machine->pageTable = pageTable;
+    machine->pageTableSize = numPages;
+
+    for(int i=0; i<numBytes; i++){
+        machine->WriteMem(virtualaddr+i, 1, buffer[i]);
+    }
+
+    machine->pageTable = oldPageTable;
+    machine->pageTableSize = oldPageTableSize;
+
+    free(buffer);
+
 }
