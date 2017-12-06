@@ -4,6 +4,7 @@ void tcho(int i){
     for(i; i<5; i++){
         PutChar('o');
     }
+    ThreadExit();
 }
 
 int main(){

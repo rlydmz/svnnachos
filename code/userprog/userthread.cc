@@ -46,7 +46,7 @@ void StartUserThread(void *arg){
 
         machine->WriteRegister (4, threadArgs->arg);
 
-        machine->WriteRegister (StackReg, currentThread->space->AllocateUserStack());
+        machine->WriteRegister (StackReg, currentThread->space->AllocateUserStack(currentThread->GetIndex()));
         DEBUG ('a', "Initializing stack register to 0x%x\n",
             currentThread->space);
                 

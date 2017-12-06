@@ -66,6 +66,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
     nbThreads = 1;
     lock = new Semaphore("lock done", 1);
     threadStack = new BitMap(UserStacksAreaSize/ThreadSize);
+    pageprovider = new PageProvider(numPages); 
     NoffHeader noffH;
     unsigned int i, size;
 
@@ -144,6 +145,7 @@ AddrSpace::~AddrSpace ()
   // LB: Missing [] for delete
   // delete pageTable;
   delete [] pageTable;
+  delete pageprovider;
   // End of modification
 }
 
@@ -182,9 +184,9 @@ AddrSpace::InitRegisters ()
 
 #ifdef CHANGED
 int 
-AddrSpace::AllocateUserStack ()
+AddrSpace::AllocateUserStack (int index)
 {
-    return numPages * PageSize - 16 - ThreadSize;
+    return numPages * PageSize - 16 - ThreadSize * index;
 }
 #endif
 
