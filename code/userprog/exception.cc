@@ -153,7 +153,42 @@ ExceptionHandler (ExceptionType which)
 		case SC_ThreadExit:
 		{
 				DEBUG ('s', "ThreadExit\n");
-				do_ThreadExit();	
+				do_ThreadExit();
+				break;
+		}
+		case SC_ForkExec:
+		{
+				DEBUG ('s', "ForkExec\n");
+
+				int addr = machine->ReadRegister(4);
+				char *filename = (char *)malloc(MAX_STRING_SIZE);
+				synchconsole->copyStringFromMachine(addr, filename, MAX_STRING_SIZE);
+
+				OpenFile *executable = fileSystem->Open(filename);
+    			AddrSpace *space;
+
+				if (executable == NULL)
+				{
+					printf("Unable to open file %s\n", filename);
+					return;
+				}
+				space = new AddrSpace(executable);
+				currentThread->space = space;
+
+				delete executable;
+				free(filename);
+
+				Thread *t = new Thread("Sixoanaillene");
+				t->space = space;
+				t->Start();
+				
+				space->InitRegisters();
+    			space->RestoreState();
+
+				machine->Run(); // jump to the user progam
+    			ASSERT(FALSE);  // machine->Run never returns;
+
+				break;	
 		}
 		#endif // CHANGED 
 

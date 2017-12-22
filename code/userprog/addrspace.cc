@@ -184,9 +184,9 @@ AddrSpace::InitRegisters ()
 
 #ifdef CHANGED
 int 
-AddrSpace::AllocateUserStack (int index)
+AddrSpace::AllocateUserStack ()
 {
-    return numPages * PageSize - 16 - ThreadSize * index;
+    return numPages * PageSize - 16 - ThreadSize;
 }
 #endif
 
